@@ -1,0 +1,130 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Original author:
+% Linux and Unix Users Group at Virginia Tech Wiki
+% (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
+% Modified by: Hector F. Jimenez S, for the Digital Electronics Laboratory.
+% License:
+% CC BY-NC-SA 3.0 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%----------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%---------------------------------------
+\documentclass[paper=a4, fontsize=12pt]{article} 		% A4 paper and 11pt font size
+\usepackage[T1]{fontenc} 								% Use 8-bit encoding that has 256 glyphs
+%\usepackage{fourier}		 							% Use the Adobe Utopia font for the document 
+\usepackage[spanish,english]{babel}						% Spanish Language, templates uses some sections in english.
+\selectlanguage{spanish}								% main language.
+\usepackage{multirow}
+\PassOptionsToPackage{spanish}{babel}
+%\renewcommand{\figurename}{Figura}						% Force rename of figure.
+%\renewcommand{\figurename}{Fig.}
+\usepackage[figurename=Fig.]{caption}
+\usepackage[utf8]{inputenc}								% tildes for spanish language.
+\usepackage{amsmath,amsfonts,amsthm} 					% Math packages.
+\usepackage{minted}										% For syntax highlighting.
+	    \renewcommand\listingscaption{Código}			%rename the source code minted !
+\usepackage{float}										% Image will be in the same place as you want.!!! x-/
+\usepackage{sectsty} 									% Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape}	   	% Make all sections centered, the default font and small caps
+\usepackage{hyperref}
+\hypersetup{											%Setups the false color and borders.
+    colorlinks=false,
+    pdfborder={0 0 0},
+}
+\newcommand\fnurl[2]{%									% set a simple and quick footnote command and include url.
+\href{#2}{#1}\footnote{\url{#2}}%	
+}
+\usepackage{graphicx}									% Import easyly images.
+\graphicspath{ {./images/} }							% Where to look for the images.
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}				% Graphics Extension to be used
+\usepackage[notes,backend=biber]{biblatex-chicago}		% Bibliography and references.
+\bibliography{biblio}									% bibliography filename.
+\usepackage{fancyhdr} 									% Custom headers and footers
+\pagestyle{fancyplain} 									% Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} 											% No page header
+\fancyfoot[L]{} 										% Empty left footer
+\fancyfoot[C]{} 										% Empty center footer
+\fancyfoot[R]{\thepage} 								% Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} 						% Remove header underlines
+\renewcommand{\footrulewidth}{0pt} 						% Remove footer underlines
+\setlength{\headheight}{13.6pt} 					    % Customize the height of the header
+\numberwithin{equation}{section}						% Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+%\numberwithin{figure}{section} 						% Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2)
+\numberwithin{table}{section} 							% Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\setlength\parindent{0pt} 								% Removes all indentation from paragraphs
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 		% Create horizontal rule command with 1 argument of height
+%%%%%%%%%%%%%%%%%%%%
+%Title Section
+%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}										%Draw arrays. in tex.
+\usetikzlibrary{matrix,backgrounds}
+\usepackage{listings}% http://ctan.org/pkg/listings
+\renewcommand{\lstlistingname}{Codigo}	
+\usepackage{url}
+\lstdefinestyle{myPrologstyle}
+{
+    language=Prolog,
+    basicstyle = \ttfamily\color{blue},
+    moredelim = [s][\color{black}]{(}{)},
+    literate =
+        {:-}{{\textcolor{black}{:-}}}2
+        {,}{{\textcolor{black}{,}}}1
+        {.}{{\textcolor{black}{.}}}1
+}
+
+\title{Programación Lógica\\ 
+\horrule{0.5pt} \\[0.4cm] 								% Thin top horizontal rule	Title rule
+\textit{Consulta \textbf{1} : Backtracking y Unificación}
+\horrule{1pt} \\[0.5cm] 			
+}
+\author{												% Authors begin.
+Héctor F. \textsc{Jiménez S.}\\
+\texttt{hfjimenez@utp.edu.co} \\
+\texttt{PGP KEY ID: 0xB05AD7B8}
+\and
+Kevin Alexander \textsc{Moreno H.}\\
+\texttt{kevinamh24@gmail.com }\\
+} 
+\date{}    						                       % Date for the report, this will hide the \today.
+\begin{document}
+\maketitle                      			           % Insert the title, author and date
+\begin{center}
+\begin{tabular}{l r}								   % two column to
+Fecha de Entrega: & 21 de Febrero, 2017 \\				   % Ramiro's Details.
+Profesor: & Cesar Jaramillo
+\end{tabular}
+\end{center}
+%%%%%%%%%%%	
+% Let's start the document.
+%%%%%%%%%%%	
+\section{Objetivos}
+Consultar sobre  \emph{que} \emph{como} y \emph{para que} se utiliza :
+\begin{enumerate}
+\item Backtracking
+\item Unificación
+\end{enumerate}
+\subsection{Backtracking }
+El \emph{backtracking} es una técnica especial utilizada en algunos paradigmas de programación con el fin de realizar una serie de pasos recursivos sobre un conjunto de posibles soluciones $p$, donde la idea es encontrar la mejor combinación posible en un momento determinado, algunos consideran que este tipo de técnicas tienen cuestiones practicas sobre grafos, ya que al buscar de manera recursiva una solución, y encontrar fallo se dice que se construye un grafo dirigido, a este también se le considera como algoritmo un uso especial sobre búsqueda en profundidad. Durante la búsqueda, si se encuentra una alternativa incorrecta, la búsqueda de la solucion debe retroceder, devolverse hasta el paso anterior y tomar la siguiente alternativa para buscar otra solución, cuando se han terminado las posibilidades intentadas del conjunto de soluciones $p$, se vuelve a la elección anterior y se toma la siguiente opción como se menciona anteriormente, pero si no hay más alternativas la búsqueda falla por que no existe una posible solución.
+
+Para hacer uso de backtracking tipicamente se utiliza recursividad en un conjunto de soluciones, el backtracking se usa en problemas en los que se tienen muchas soluciones y se desea encontrarlas, hay muchos ejemplos de problemas aplicables como encontrar la salida en un laberinto, resolver sudokus dinamicamente, el problema de las 8 reinas, entre otros son aplicaciones del backtracking.
+\subsection{Unificación Programación Lógica}
+Como sabemos la programación lógica en Prolog consiste en un conjunto de sentencias y hechos que son afirmaciones verdadera de la forma$$A:- B $$, esto implica que el hecho A es cierto si es cierto el  hecho \textbf{B}. Ahora estos hechos y sentencias se convierten en nuestro conjunto de reglas que le permitirán resolver ciertas incógnitas o dudas que se le presenten  a nuestro programa de Prolog, para ello el hace uso de dos conceptos :
+\begin{itemize}
+\item Unificación
+\item Resolución
+\end{itemize}
+Nosotros para esta tarea hablaremos sobre la unificación; como sabemos las instrucciones se ejecutan normalmente en orden secuencial, es decir, una a continuación de otra, en el mismo orden en que están escritas, así que el interprete de Prolog es el que va resolviendo y verificando los hechos, y sentencias.
+El proceso de unificación intenta casar un predicado con otro, es decir comprobar si son absolutamente iguales, cuando es posible hacer sustituciones, éstas se realizan de manera que los predicados que se están unificando se tornen completamente iguales y proporcionen un resultado de ÉXITO. La unificación se realiza, para cada predicado, de izquierda a derecha, y para cada conjunto de predicados, de arriba a abajo. Se pueden unificar variables con constantes, siempre que la variable no esté instanciada. Si la variable está instanciada, el hecho de hacer unificación entre ambas se corresponde con la situación de unificación de dos constantes. Para que dos constantes se puedan unificar ambas han de ser iguales.
+Esta funcionalidad, unida a la posibilidad de crear términos complejos con estructuras anidadas, resulta un mecanismo muy potente y la principal ventaja a la hora de utilizar Prolog. En Prolog, decimos que dos términos distintos \texttt{termino1} y \texttt{termino2} unifican en los siguientes casos:
+\begin{enumerate}
+\item si termino1 y termino2 son constantes unifican si y solo si son el  mismo átomo o el mismo número.
+\item si termino1 es una variable y termino2 es cualquier tipo de término unifican, y además, termino1 se instancia a termino2. En sentido contrario funciona exactamente igual. Y si ambos términos son variables, unifican porque cada uno se instancia con el otro y comparten valores
+\end{enumerate}
+
+\subsection{Bibliografía}
+\begin{enumerate}
+\item Introduccion a Prolog.  \url{http://www.sc.ehu.es/jiwhehum2/prolog/Temario/Tema1.pdf}
+\item Prolog: unificación y recursión, MRC \url{http://vitojph.github.io/ling/mrc/Prolog-Unificacion-Recursion.pdf}
+\item Prolog: Lenguaje y Conceptos \url{http://www.uhu.es/nieves.pavon/pprogramacion/temario/tema1/tema1.html#_Toc495042877}
+\end{enumerate}
+\end{document}
